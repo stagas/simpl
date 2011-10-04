@@ -1,0 +1,21 @@
+{ "name" : "simpl"
+, "description" : "Simple sockets anywhere"
+, "version" : "0.0.1"
+, "homepage" : "https://github.com/stagas/simpl"
+, "author" : "George Stagas <gstagas@gmail.com> (http://stagas.com/)"
+, "repository" :
+  { "type" : "git"
+  , "url" : "https://github.com/stagas/simpl.git"
+  }
+, "main": "./index.js"
+, "dependencies" : {
+    "websocket" : ">=0.0.17"
+  }
+, "devDependencies" : {
+    "tap" : "=0.0.x"
+  }
+, "scripts" : {
+    "test" : "tap test"
+  }
+, "engines" : { "node" : ">=0.4.12" }
+}
