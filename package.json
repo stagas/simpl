@@ -1,6 +1,6 @@
 { "name" : "simpl"
 , "description" : "Simple sockets anywhere"
-, "version" : "0.0.1"
+, "version" : "0.0.2"
 , "homepage" : "https://github.com/stagas/simpl"
 , "author" : "George Stagas <gstagas@gmail.com> (http://stagas.com/)"
 , "repository" :
@@ -13,6 +13,7 @@
   }
 , "devDependencies" : {
     "tap" : "=0.0.x"
+  , "express" : "=2.x.x"
   }
 , "scripts" : {
     "test" : "tap test"

@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="/simpl.js"></script>
+  </head>
+<body>
+
+<input id="input" type="text" value="" autocomplete="off">
+
+<pre id="messages"></pre>
+
+<script>
+
+var client = simpl()
+
+var getId = document.getElementById.bind(document)
+
+var input = getId('input')
+input.focus()
+var messages = getId('messages')
+var append = function (text) {
+  messages.appendChild(
+    document.createTextNode(
+      '['
+    + new Date()
+      .toTimeString()
+      .split(':')
+      .slice(0, 2)
+      .join(':')
+    + '] ' + text + '\n'
+    )
+  )
+}
+
+client.on('ready', function () {
+  input.addEventListener('keyup', function (e) {
+    if (e.keyCode === 13) {
+      append('<you> ' + input.value)
+      client.send(input.value)
+      input.value = ''
+    }
+  })
+})
+
+client.on('message', function (message) {
+  append(message)
+})
+
+</script>
+
+</body>
+</html>

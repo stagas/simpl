@@ -167,3 +167,22 @@ Emits when the client connects to the server.
 Emits when the client receives a message.
 
 
+
+### Browser Client Usage
+
+The browser client is just a wrapper for WebSocket and works like the Node.js
+client and is even simpler:
+
+```
+<script src="/simpl.js">
+<script>
+  var client = simpl()
+  client.on('ready', function () {
+    consle.log('client is ready!')
+    client.send('Hello, world!')
+  })
+  client.on('message', function (message) {
+    console.log(message)
+  })
+</script>
+```
