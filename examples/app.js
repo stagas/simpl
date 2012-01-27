@@ -1,10 +1,10 @@
 var simpl = require('../')
+var path = require('path')
 var express = require('express')
 var app = express.createServer()
 
 app.use(express.logger())
-app.use(app.router)
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(path.join(__dirname, 'public')))
 
 var server = simpl.createServer(app)
 

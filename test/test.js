@@ -1,16 +1,16 @@
 var simpl = require('../')
 var test = require('tap').test
 
+var httpServer = require('http').createServer()
+
 var tests = {
   "websocket server standalone": { port: 8080 }
-, "websocket server on http server": { server: require('http').createServer() }
-, "unix socket server": { path: '/tmp/test-simpl-unix-socket-server.sock' }
+, "websocket server on http server": { server: httpServer }
 }
 
 Object.keys(tests).forEach(function (desc) {
 
   test(desc, function (t) {
-
     var server
       , client, client2
       , conn, conn2

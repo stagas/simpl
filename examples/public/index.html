@@ -2,6 +2,7 @@
 <html>
   <head>
     <script src="/simpl.js"></script>
+    <title>simpl chat</title>
   </head>
 <body>
 
@@ -10,15 +11,24 @@
 <pre id="messages"></pre>
 
 <script>
-
-var client = simpl()
-
 var getId = document.getElementById.bind(document)
+
+window.client = null
 
 var input = getId('input')
 input.focus()
+
+function keyupListener (e) {
+  if (e.keyCode === 13) {
+    append('<you> ' + input.value)
+    client.send(input.value)
+    input.value = ''
+  }
+}
+
 var messages = getId('messages')
-var append = function (text) {
+
+function append (text) {
   messages.appendChild(
     document.createTextNode(
       '['
@@ -32,20 +42,27 @@ var append = function (text) {
   )
 }
 
-client.on('ready', function () {
-  input.addEventListener('keyup', function (e) {
-    if (e.keyCode === 13) {
-      append('<you> ' + input.value)
-      client.send(input.value)
-      input.value = ''
-    }
+;(function connect () {
+  client = simpl()
+
+  client.once('error', function (err) {
+    client.destroy()
+    input.removeEventListener('keyup', keyupListener)
+    console.error(err)
+    setTimeout(function () {
+      console.log('retrying connection')
+      connect()
+    }, 500)
   })
-})
 
-client.on('message', function (message) {
-  append(message)
-})
+  client.once('ready', function () {
+    input.addEventListener('keyup', keyupListener)
+  })
 
+  client.on('message', function (message) {
+    append(message)
+  })
+}())
 </script>
 
 </body>
