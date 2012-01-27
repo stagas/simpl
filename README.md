@@ -30,13 +30,10 @@ server.on('message', function (message, conn) {
 });
 
 server.on('ready', function () {
-  console.log("Server listening");
-
-  var client = simpl.createClient(8080);
-
-  client.on('connect', function () {
-    client.send("Hello, world!");
-    client.close();
+  server.on('connection', function (conn) {
+    conn.on('message', function (message) {
+      console.log(message);
+    });
   });
 });
 ```
@@ -46,14 +43,14 @@ Browser:
 ```javascript
 <script src="/simpl.js">
 <script>
-  var client = simpl()
-  client.on('ready', function () {
-    consle.log('client is ready!')
+  var client = simpl();
+  client.on('connect', function () {
+    consle.log('client connected')
     client.send('Hello, world!')
-  })
+  });
   client.on('message', function (message) {
-    console.log(message)
-  })
+    console.log(message);
+  });
 </script>
 ```
 
