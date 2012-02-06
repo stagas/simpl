@@ -6,6 +6,7 @@ var server, client, socket
 test("start server", function (t) {
   t.plan(2)
   server = simpl.createServer(8080)
+  server.use(simpl.json())
   server.on('ready', function () {
     t.pass("server is ready")
   })
@@ -21,6 +22,7 @@ test("start client", function (t) {
     socket = s
   })
   client = simpl.createClient(8080)
+  client.use(simpl.json())
   client.on('connect', function () {
     t.pass("client connected")
   })
@@ -28,26 +30,28 @@ test("start client", function (t) {
 
 test("client send 'hello' to server", function (t) {
   t.plan(3)
+  var msg = { hello: 'world' }
   socket.once('message', function (message) {
-    t.equals(message, 'hello')
+    t.same(message, msg)
   })
   server.once('message', function (message, s) {
-    t.equals(message, 'hello')
+    t.same(message, msg)
     t.same(s, socket)
   })
-  client.send('hello')
+  client.send(msg)
 })
 
 test("server send 'hello back' to client", function (t) {
   t.plan(3)
+  var msg = { hello: 'world' }
   client.socket.once('message', function (message) {
-    t.equals(message, 'hello back')
+    t.same(message, msg)
   })
   client.once('message', function (message, s) {
-    t.equals(message, 'hello back')
+    t.same(message, msg)
     t.same(s, client.socket)
   })
-  socket.send('hello back')
+  socket.send(msg)
 })
 
 test("close client", function (t) {

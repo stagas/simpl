@@ -1,0 +1,15 @@
+<script src="/simpl.js"></script>
+<script>
+  var simpl = require('simpl');
+  var client = simpl.createClient();
+  client.use(simpl.uid());
+  client.use(simpl.rpc());
+  client.use(simpl.json());
+  client.use(simpl.log());
+</script>
+<input onkeyup="
+  client.remote('multiply', [ this.value, this.value ], function (result) { 
+    document.getElementById('result').innerHTML = result;
+  });
+">
+<div id="result"></div>

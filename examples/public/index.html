@@ -3,17 +3,41 @@
   <head>
     <script src="/simpl.js"></script>
     <title>simpl chat</title>
+    <style>
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+html, body {
+width:100%;
+height:100%;
+margin:0;
+padding:0;
+}
+
+#messages {
+height:3000px;
+max-height:94%;
+overflow-y:scroll;
+margin:0;
+padding:0;
+}
+
+#input {
+height:6%;
+width:100%;
+}
+    </style>
   </head>
 <body>
 
-<input id="input" type="text" value="" autocomplete="off">
-
 <pre id="messages"></pre>
 
-<script>
-var getId = document.getElementById.bind(document)
+<input id="input" type="text" value="" autocomplete="off">
 
+<script>
+window.simpl = require('simpl')
 window.client = null
+
+var getId = document.getElementById.bind(document)
 
 var input = getId('input')
 input.focus()
@@ -40,22 +64,29 @@ function append (text) {
     + '] ' + text + '\n'
     )
   )
+  messages.scrollTop = messages.scrollHeight
+}
+
+append(new Array(1000).join('\n'))
+window.onresize = function () {
+  messages.scrollTop = messages.scrollHeight
 }
 
 ;(function connect () {
-  client = simpl()
+  client = simpl.createClient()
+  client.use(simpl.log())
 
-  client.once('error', function (err) {
+  client.once('close', function (err) {
     client.destroy()
     input.removeEventListener('keyup', keyupListener)
-    console.error(err)
     setTimeout(function () {
-      console.log('retrying connection')
+      console.log('reconnecting')
       connect()
     }, 500)
   })
 
-  client.once('ready', function () {
+  client.once('connect', function () {
+    append('* joined chat, type your messages below:')
     input.addEventListener('keyup', keyupListener)
   })
 

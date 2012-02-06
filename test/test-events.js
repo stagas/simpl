@@ -6,6 +6,9 @@ var server, client, socket
 test("start server", function (t) {
   t.plan(2)
   server = simpl.createServer(8080)
+  server.use(simpl.uid())
+  server.use(simpl.events())
+  server.use(simpl.json())
   server.on('ready', function () {
     t.pass("server is ready")
   })
@@ -21,35 +24,30 @@ test("start client", function (t) {
     socket = s
   })
   client = simpl.createClient(8080)
+  client.use(simpl.uid())
+  client.use(simpl.events())
+  client.use(simpl.json())
   client.on('connect', function () {
     t.pass("client connected")
   })
 })
 
-test("client send 'hello' to server", function (t) {
-  t.plan(3)
-  socket.once('message', function (message) {
-    t.equals(message, 'hello')
+test("client emit to server", function (t) {
+  t.plan(1)
+  socket.emitter.once('hello', function (message) {
+    t.equal(message, 'world')
   })
-  server.once('message', function (message, s) {
-    t.equals(message, 'hello')
-    t.same(s, socket)
-  })
-  client.send('hello')
+  client.remoteEmit('hello', 'world')
 })
 
-test("server send 'hello back' to client", function (t) {
-  t.plan(3)
-  client.socket.once('message', function (message) {
-    t.equals(message, 'hello back')
+/*
+test("server call client procedure", function (t) {
+  t.plan(1)
+  socket.remote('divide', [ 12, 4 ], function (reply) {
+    t.equal(reply, 3, "got client reply")
   })
-  client.once('message', function (message, s) {
-    t.equals(message, 'hello back')
-    t.same(s, client.socket)
-  })
-  socket.send('hello back')
 })
-
+*/
 test("close client", function (t) {
   t.plan(2)
   client.once('disconnect', function () {

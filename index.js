@@ -1,1 +1,1 @@
-module.exports = require('./lib/simpl.js')
+module.exports = require('./lib/simpl')

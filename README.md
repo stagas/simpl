@@ -1,57 +1,58 @@
 # simpl
 
-Simple sockets anywhere
-
+Highly pluggable WebSockets framework
 
 ## Introduction
 
-simpl is a unified API for websockets and unix sockets. I wanted to send simple
-text messages around and have the same API, whether it's a web server or a shell
-app. This does just that.
-
+simpl is a framework over WebSockets, which allows extensions (or middleware)
+to be built that extend functionality with a clean and easy api.
 
 ## Installation
 
 `npm install simpl`
 
-
-## Example
+## Full-featured example
 
 Server:
 
 ```javascript
+var express = require('express')
+var app = express.createServer()
+app.use(express.static(__dirname + '/public'))
+
 var simpl = require('simpl');
+var server = simpl.createServer(app);
 
-var server = simpl.createServer(8080);
+server.use(simpl.uid());
+server.use(simpl.rpc({
+  'multiply': function (a, b, callback) {
+    callback(a * b);
+  }
+}));
+server.use(simpl.json());
+server.use(simpl.log());
 
-server.on('message', function (message, conn) {
-  console.log("Got message from client:", message);
-  server.close();
-});
-
-server.on('ready', function () {
-  server.on('connection', function (conn) {
-    conn.on('message', function (message) {
-      console.log(message);
-    });
-  });
-});
+app.listen(8080);
 ```
 
 Browser:
 
-```javascript
-<script src="/simpl.js">
+```html
+<script src="/simpl.js"></script>
 <script>
-  var client = simpl();
-  client.on('connect', function () {
-    consle.log('client connected')
-    client.send('Hello, world!')
-  });
-  client.on('message', function (message) {
-    console.log(message);
-  });
+  var simpl = require('simpl');
+  var client = simpl.createClient();
+  client.use(simpl.uid());
+  client.use(simpl.rpc());
+  client.use(simpl.json());
+  client.use(simpl.log());
 </script>
+<input onkeyup="
+  client.remote('multiply', [ this.value, this.value ], function (result) { 
+    document.getElementById('result').innerHTML = result;
+  });
+">
+<div id="result"></div>
 ```
 
 
@@ -66,18 +67,17 @@ Browser:
 Creates a webserver with a websocket server attached to it and listens on `port`
 and `host`.
 
-**server = simpl.createServer(httpServer)**
+**server = simpl.createServer(app)**
 
-Attaches a websocket server to an existing http server.
+Attaches a websocket server to an existing express server.
 
 
 
 ### Server Methods
 
+**server.use(fn || event [, middleware])**
 
-**server.broadcast(message)**
-
-Broadcasts a message to all connected clients.
+Use a middleware.
 
 **server.close()**
 
@@ -110,15 +110,11 @@ Emits when server receives a message.
 ### Connection Methods
 
 
-**conn.send(message)**
+**socket.send(message)**
 
 Sends a message.
 
-**conn.broadcast(message)**
-
-Broadcasts a message to all clients except this one.
-
-**conn.close()**
+**socket.close()**
 
 Closes a connection.
 
@@ -149,6 +145,9 @@ Creates a client and connects to a websocket server on `port` and `host`.
 
 ### Client Methods
 
+**client.use(fn || event [, middleware])**
+
+Use a middleware.
 
 **client.send(message)**
 
@@ -171,3 +170,68 @@ Emits when the client connects to the server.
 
 Emits when the client receives a message.
 
+
+## Middleware
+
+**log** -- Logs activity.
+
+**uid** -- Provides a unique id to each outgoing message. Used by `rpc`.
+
+**sid** -- Attach a unique id to the socket.
+
+**track** -- Keep track of connected clients.
+
+**broadcast** -- Adds a `.broadcast` method to the sockets.
+
+**json** -- Send and receive objects (wrapper for `JSON.parse`/`stringify`). Used by almost all other middleware.
+
+**date** -- Adds a date field to each outgoing message, and parses incoming dates to native `Date` objects.
+
+**rpc** -- Remote Procedure Call. Used by `events`.
+
+Example:
+  
+_Server:_
+
+```javascript
+server.use(simpl.rpc({
+  someMethod: function (x, y, z, callback) {
+    // do stuff
+    callback(result);
+  }
+}));
+```
+
+_Client:_
+
+```javascript
+client.remote('someMethod', [ 'arg', 'arg', ... ], function (result) {
+  // do something with the result
+});
+```
+
+**events** -- Emit events remotely.
+
+Example:
+
+_Server:_
+
+```javascript
+server.use(simpl.events());
+server.on('connection', function (socket) {
+  socket.emitter.on('some event', function (data) {
+    // do something with the data
+  });
+});
+```
+
+_Client:_
+
+```javascript
+client.use(simpl.events());
+client.remoteEmit('some event', 'some data');
+```
+
+## Licence
+
+MIT/X11
