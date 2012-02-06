@@ -145,7 +145,7 @@ Creates a client and connects to a websocket server on `port` and `host`.
 
 ### Client Methods
 
-**client.use(fn || event, fn)**
+**client.use(fn || 'event', fn)**
 
 Use an [EventStack](https://github.com/stagas/eventstack) middleware.
 
