@@ -69,15 +69,15 @@ and `host`.
 
 **server = simpl.createServer(app)**
 
-Attaches a websocket server to an existing express server.
+Attaches a websocket server to an existing `express` server.
 
 
 
 ### Server Methods
 
-**server.use(fn || event [, middleware])**
+**server.use(fn || 'event', fn )**
 
-Use a middleware.
+Use an [EventStack](https://github.com/stagas/eventstack) middleware.
 
 **server.close()**
 
@@ -145,9 +145,9 @@ Creates a client and connects to a websocket server on `port` and `host`.
 
 ### Client Methods
 
-**client.use(fn || event [, middleware])**
+**client.use(fn || event, fn)**
 
-Use a middleware.
+Use an [EventStack](https://github.com/stagas/eventstack) middleware.
 
 **client.send(message)**
 
@@ -173,21 +173,21 @@ Emits when the client receives a message.
 
 ## Middleware
 
-**log** -- Logs activity.
+**[log](https://github.com/stagas/simpl/blob/master/lib/middleware/log.js)** -- Logs activity.
 
-**uid** -- Provides a unique id to each outgoing message. Used by `rpc`.
+**[uid](https://github.com/stagas/simpl/blob/master/lib/middleware/uid.js)** -- Provides a unique id to each outgoing message. Used by `rpc`.
 
-**sid** -- Attach a unique id to the socket.
+**[sid](https://github.com/stagas/simpl/blob/master/lib/middleware/sid.js)** -- Attach a unique id to the socket.
 
-**track** -- Keep track of connected clients.
+**[track](https://github.com/stagas/simpl/blob/master/lib/middleware/track.js)** -- Keep track of connected clients.
 
-**broadcast** -- Adds a `.broadcast` method to the sockets.
+**[broadcast](https://github.com/stagas/simpl/blob/master/lib/middleware/broadcast.js)** -- Adds a `.broadcast` method to the sockets.
 
-**json** -- Send and receive objects (wrapper for `JSON.parse`/`stringify`). Used by almost all other middleware.
+**[json](https://github.com/stagas/simpl/blob/master/lib/middleware/json.js)** -- Send and receive objects (wrapper for `JSON.parse`/`stringify`). Used by almost all other middleware.
 
-**date** -- Adds a date field to each outgoing message, and parses incoming dates to native `Date` objects.
+**[date](https://github.com/stagas/simpl/blob/master/lib/middleware/date.js)** -- Adds a date field to each outgoing message, and parses incoming dates to native `Date` objects.
 
-**rpc** -- Remote Procedure Call. Used by `events`.
+**[rpc](https://github.com/stagas/simpl/blob/master/lib/middleware/rpc.js)** -- Remote Procedure Call. Used by `events`.
 
 Example:
   
@@ -210,7 +210,7 @@ client.remote('someMethod', [ 'arg', 'arg', ... ], function (result) {
 });
 ```
 
-**events** -- Emit events remotely.
+**[events](https://github.com/stagas/simpl/blob/master/lib/middleware/events.js)** -- Emit events remotely.
 
 Example:
 
