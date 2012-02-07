@@ -40,14 +40,14 @@ test("client emit to server", function (t) {
   client.remoteEmit('hello', 'world')
 })
 
-/*
-test("server call client procedure", function (t) {
+test("server emit to client", function (t) {
   t.plan(1)
-  socket.remote('divide', [ 12, 4 ], function (reply) {
-    t.equal(reply, 3, "got client reply")
+  client.emitter.once('hello', function (message) {
+    t.equal(message, 'world')
   })
+  socket.remoteEmit('hello', 'world')
 })
-*/
+
 test("close client", function (t) {
   t.plan(2)
   client.once('disconnect', function () {
