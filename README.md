@@ -232,6 +232,24 @@ client.use(simpl.events());
 client.remoteEmit('some event', 'some data');
 ```
 
+**[dict](https://github.com/stagas/simpl/blob/master/lib/middleware/dict.js)** -- Dictionary (de)compressor.
+
+Example:
+
+```javascript
+var dict = [
+  [ '{"some":"big","data":"thing"}', '^a' ],
+  [ '{"some":"other","big":"data"}', '^b' ]
+];
+server.use(simpl.json());
+server.use(simpl.dict(dict));
+```
+It will replace all occurrences of the first string in each array with the second on
+an outgoing message and run in reverse order for incoming messages. It can significantly reduce
+bandwidth in cases where the same pattern gets repeated in I/O. Use simpl.log() to find
+strings that are repeated often and copy & paste into the dictionary.
+
+
 ## Licence
 
 MIT/X11
