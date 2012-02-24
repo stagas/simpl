@@ -15,3 +15,6 @@ server.use(simpl.json());
 server.use(simpl.log());
 
 app.listen(8080);
+app.on('listening', function () {
+  console.log('Go to: http://localhost:8080/rpc.html')
+})

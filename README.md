@@ -40,15 +40,21 @@ Browser:
 ```html
 <script src="/simpl.js"></script>
 <script>
-  var simpl = require('simpl');
-  var client = simpl.createClient();
-  client.use(simpl.uid());
-  client.use(simpl.rpc());
-  client.use(simpl.json());
-  client.use(simpl.log());
+  window.remote = {}
+  var simpl = require('simpl')
+  simpl.createClient()
+    .use(simpl.uid())
+    .use(simpl.rpc('multiply'))
+    .use(simpl.json())
+    .use(simpl.log())
+    .on('connect', function (client) {
+      client.remote(function (remote) {
+        window.remote = remote;
+      });
+    });
 </script>
 <input onkeyup="
-  client.remote('multiply', [ this.value, this.value ], function (result) { 
+  remote.multiply(this.value, this.value, function (result) { 
     document.getElementById('result').innerHTML = result;
   });
 ">
@@ -205,8 +211,11 @@ server.use(simpl.rpc({
 _Client:_
 
 ```javascript
-client.remote('someMethod', [ 'arg', 'arg', ... ], function (result) {
-  // do something with the result
+client.use(simpl.rpc('someMethod'))
+client.remote(function (remote) {
+  remote.someMethod('arg', 'arg', ..., function (result) {
+    // do something with the result
+  });
 });
 ```
 
@@ -229,7 +238,7 @@ _Client:_
 
 ```javascript
 client.use(simpl.events());
-client.remoteEmit('some event', 'some data');
+client.remote.emit('some event', 'some data');
 ```
 
 **[dict](https://github.com/stagas/simpl/blob/master/lib/middleware/dict.js)** -- Dictionary (de)compressor.
