@@ -11,7 +11,7 @@ test("start server", function (t) {
     'multiply': function (a, b, callback) {
       callback(a * b)
     }
-  }))
+  }, 'divide'))
   server.use(simpl.json())
   server.on('ready', function () {
     t.pass("server is ready")
@@ -33,7 +33,7 @@ test("start client", function (t) {
     'divide': function (a, b, callback) {
       callback(a / b)
     }
-  }))
+  }, 'multiply'))
   client.use(simpl.json())
   client.on('connect', function () {
     t.pass("client connected")
@@ -42,15 +42,19 @@ test("start client", function (t) {
 
 test("client call server procedure", function (t) {
   t.plan(1)
-  client.remote('multiply', [ 2, 5 ], function (reply) {
-    t.equal(reply, 10, "got server reply")
+  client.remote(function (remote) {
+    remote.multiply(2, 5, function (reply) {
+      t.equal(reply, 10, "got server reply")
+    })
   })
 })
 
 test("server call client procedure", function (t) {
   t.plan(1)
-  socket.remote('divide', [ 12, 4 ], function (reply) {
-    t.equal(reply, 3, "got client reply")
+  socket.remote(function (remote) {
+    remote.divide(12, 4 , function (reply) {
+      t.equal(reply, 3, "got client reply")
+    })
   })
 })
 
