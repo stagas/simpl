@@ -1,7 +1,7 @@
 {
   "name": "simpl",
   "description": "Highly pluggable WebSockets framework",
-  "version": "0.2.7",
+  "version": "0.3.0",
   "homepage": "https://github.com/stagas/simpl",
   "author": "George Stagas <gstagas@gmail.com> (http://stagas.com/)",
   "repository": {
@@ -10,7 +10,7 @@
   },
   "main": "index",
   "dependencies": {
-    "ws": "~0.4.3",
+    "ws": "~0.4.7",
     "eventstack": "~0.2.0",
     "express": "~2.5.6",
     "express-expose": "~0.2.1"
