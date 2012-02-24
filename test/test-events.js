@@ -37,9 +37,7 @@ test("client emit to server", function (t) {
   socket.emitter.once('hello', function (message) {
     t.equal(message, 'world')
   })
-  client.remote(function (remote) {
-    remote.emit('hello', 'world')
-  })
+  client.remote.emit('hello', 'world')
 })
 
 test("server emit to client", function (t) {
@@ -47,9 +45,7 @@ test("server emit to client", function (t) {
   client.emitter.once('hello', function (message) {
     t.equal(message, 'world')
   })
-  socket.remote(function (remote) {
-    remote.emit('hello', 'world')
-  })
+  socket.remote.emit('hello', 'world')
 })
 
 test("close client", function (t) {
