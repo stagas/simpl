@@ -40,21 +40,15 @@ Browser:
 ```html
 <script src="/simpl.js"></script>
 <script>
-  window.remote = {}
   var simpl = require('simpl')
-  simpl.createClient()
+  var client = simpl.createClient()
     .use(simpl.uid())
     .use(simpl.rpc('multiply'))
     .use(simpl.json())
     .use(simpl.log())
-    .on('connect', function (client) {
-      client.remote(function (remote) {
-        window.remote = remote;
-      });
-    });
 </script>
 <input onkeyup="
-  remote.multiply(this.value, this.value, function (result) { 
+  client.remote.multiply(this.value, this.value, function (result) { 
     document.getElementById('result').innerHTML = result;
   });
 ">
@@ -212,11 +206,11 @@ _Client:_
 
 ```javascript
 client.use(simpl.rpc('someMethod'))
-client.remote(function (remote) {
-  remote.someMethod('arg', 'arg', ..., function (result) {
+client.on('connect', function () {
+  client.remote.someMethod('arg', 'arg', ..., function (result) {
     // do something with the result
   });
-});
+})
 ```
 
 **[events](https://github.com/stagas/simpl/blob/master/lib/middleware/events.js)** -- Emit events remotely.
@@ -228,7 +222,7 @@ _Server:_
 ```javascript
 server.use(simpl.events());
 server.on('connection', function (socket) {
-  socket.emitter.on('some event', function (data) {
+  socket.remote.on('some event', function (data) {
     // do something with the data
   });
 });
@@ -238,7 +232,9 @@ _Client:_
 
 ```javascript
 client.use(simpl.events());
-client.remote.emit('some event', 'some data');
+client.on('connect', function () {
+  client.remote.emit('some event', 'some data');
+});
 ```
 
 **[dict](https://github.com/stagas/simpl/blob/master/lib/middleware/dict.js)** -- Dictionary (de)compressor.

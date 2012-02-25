@@ -1,21 +1,15 @@
 <script src="https://raw.github.com/kriskowal/es5-shim/master/es5-shim.min.js"></script>
 <script src="/simpl.js"></script>
 <script>
-  window.remote = {}
   var simpl = require('simpl')
-  simpl.createClient()
+  var client = simpl.createClient()
     .use(simpl.uid())
     .use(simpl.rpc('multiply'))
     .use(simpl.json())
     .use(simpl.log())
-    .on('connect', function (client) {
-      client.remote(function (remote) {
-        window.remote = remote;
-      });
-    });
 </script>
 <input onkeyup="
-  remote.multiply(this.value, this.value, function (result) { 
+  client.remote.multiply(this.value, this.value, function (result) { 
     document.getElementById('result').innerHTML = result;
   });
 ">
